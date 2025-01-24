@@ -1,3 +1,4 @@
+
 int main()
 {
     // Enable the clock for Port F
@@ -21,9 +22,14 @@ int main()
     
     while (1)
     {
-        *GPIOFDATA = 0x02U;  // Turn ON the blue LED (PF1) 0x02u for red 0x08u green
-        for (volatile int i = 0; i < 100000; i++);  // Delay
-
+        *GPIOFDATA = 0x04U;  // Turn ON the blue LED (PF1) 0x02u for red 0x08u green
+        for (volatile int i = 0; i < 1000000; i++);  // Delay
+        *GPIOFDATA = 0x00U;  // Turn OFF all LEDs
+        for (volatile int i = 0; i < 1000000; i++);  // Delay
      
     }
 }
+
+        
+     
+    
