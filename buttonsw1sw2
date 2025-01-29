@@ -1,0 +1,47 @@
+#include "TM4C123.h"  // Include header for TM4C123 microcontroller
+#include <stdint.h>
+
+uint8_t Button_State;
+uint8_t Button_State1;
+
+
+int main() {
+    // Enable Clock for Port F
+    SYSCTL->RCGCGPIO |= (1 << 5);  
+   // while ((SYSCTL->PRGPIO & (1 << 5)) == 0);  // Wait for the clock to stabilize
+
+    // Unlock PF0 (needed for GPIO use)
+    GPIOF->LOCK = 0x4C4F434B;  // Unlock Port F
+    GPIOF->CR |= (1 << 0);     // Allow changes to PF0
+
+    // Set PF3 as Output (LED)
+    GPIOF->DIR |= (1 << 3);
+    
+    // Set PF4 and PF0 as Input (SW1 and SW2)
+    GPIOF->DIR = GPIOF->DIR & (~(1 << 4) & ~(1 << 0));
+    
+    // Enable Internal Pull-Up Resistors for PF4 and PF0
+    GPIOF->PUR |= (1 << 4) | (1 << 0);
+    
+    // Enable Digital Functionality for PF3, PF4, and PF0
+    GPIOF->DEN |= (1 << 3) | (1 << 4) | (1 << 0);
+
+    while(1) {
+        // Read Button States (Active Low)
+        Button_State = ((GPIOF->DATA & (1 << 4)) >> 4);  // Read PF4 (SW1)
+        
+
+        // If either button is pressed, turn on LED
+        if(Button_State == 0 ) {  
+            GPIOF->DATA |= (1 << 3);  // Turn on LED
+        } 
+				Button_State1 = ((GPIOF->DATA & (1 << 0)) >> 0); // Read PF0 (SW2)
+				if(Button_State1 == 0){
+            GPIOF->DATA &= ~(1 << 3);  // Turn off LED
+        }
+
+        
+    }
+}
+		//delay_ms(20000000000);  // Debounce delay
+
